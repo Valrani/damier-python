@@ -22,7 +22,7 @@ def initPawns():
     """
     Init all the pawns for a new game.
     The ID of the pawns are stored in a list (blackPawns and whitePawns).
-    We also bind to each pawn some callbacks to enable the drag-n-drop mechanism.
+    We also bind some callbacks to each pawn to enable the drag-n-drop mechanism.
     :return: nothing
     """
     global initPawnsButton, blackLeftCounterLabel, whiteLeftCounterLabel
