@@ -70,6 +70,7 @@ def initPawns():
     whitePawns.append(drawPawn(8, 9, "white"))
     # add a drag-n-drop detection for each pawn
     for pawnId in blackPawns + whitePawns:
+        can.tag_bind(pawnId, '<Button-1>', onPawnClick)
         can.tag_bind(pawnId, '<B1-Motion>', onPawnMoving)
         can.tag_bind(pawnId, '<ButtonRelease-1>', onPawnStopMoving)
     # GUI setup
@@ -93,6 +94,20 @@ def initBoard():
             can.create_rectangle(x, y, x1, y1, fill="#c7784c")
 
 
+def onPawnClick(event):
+    """
+    Callback executed the first time the mouse interact with a pawn.
+    Used to store the original position of the pawn, so when the pawn is moved then released,
+    if the position is invalid, we can move it back to its original position.
+    We temporarily store the original position inside the movingPawnOriginalCoordinates variable.
+    :param event: used to retrieve the ID of the pawn we interact with
+    :return: nothing
+    """
+    global movingPawnOriginalCoordinates
+    pawnId = event.widget.find_withtag('current')[0]
+    movingPawnOriginalCoordinates = can.coords(pawnId)
+
+
 def onPawnMoving(event):
     """
     Callback executed during the pawn movement.
@@ -108,18 +123,57 @@ def onPawnStopMoving(event):
     """
     Callback executed when the mouse is released.
     Used to correctly place the pawn to the nearest case.
+    Check if the case is valid (see the rules of the game).
+    If not, replace the pawn to its original case.
     :param event: used to know the X and Y coordinates of the mouse
     :return: nothing
     """
     pawnId = event.widget.find_withtag('current')[0]
     nearestX = ceil(event.x / 50) * 50
     nearestY = ceil(event.y / 50) * 50
-    can.coords(pawnId, nearestX - 45, nearestY - 45, nearestX - 5, nearestY - 5)
+    # destination coordinates
+    x = nearestX - 45
+    y = nearestY - 45
+    x1 = nearestX - 5
+    y1 = nearestY - 5
+    if isValidMove(pawnId, x, y, x1, y1):
+        can.coords(pawnId, x, y, x1, y1)
+    else:
+        can.coords(pawnId, movingPawnOriginalCoordinates)
+
+
+def isValidMove(pawnId, destX, destY, destX1, destY1):
+    """
+    Check if the pawn can be moved to the given coordinates.
+    Rules :
+    - the case cannot be occupied by another pawn;
+    - the pawn can only move 1 case in diagonal, or 2 if he "jumps" above an enemy pawn;
+    :return: True if the move is valid, False otherwise
+    """
+    sourceX = movingPawnOriginalCoordinates[0]
+    sourceY = movingPawnOriginalCoordinates[1]
+    sourceX1 = movingPawnOriginalCoordinates[2]
+    sourceY1 = movingPawnOriginalCoordinates[3]
+    # TODO remove after debug
+    print("The pawn n°", pawnId, "wants to move from", sourceX, sourceY, sourceX1, sourceY1, "to", destX, destY, destX1,
+          destY1)
+    # check if the pawn is outside de bounds of the canvas
+    if (destX < 0 or destX > 500) or (destY < 0 or destY > 500) or (destX1 < 0 or destX1 > 500) or (
+            destY1 < 0 or destY1 > 500):
+        return False
+    # check if the move is not 1 case in diagonal
+    if (destX != sourceX + 50 and destX != sourceX - 50) or (destY != sourceY + 50 and destY != sourceY - 50) or (
+            destX1 != sourceX1 + 50 and destX1 != sourceX1 - 50) or (
+            destY1 != sourceY1 + 50 and destY1 != sourceY1 - 50):
+        return False
+    # the move is valid
+    return True
 
 
 # variables
 blackPawns = []
 whitePawns = []
+movingPawnOriginalCoordinates = None
 
 # GUI
 fen = Tk()
