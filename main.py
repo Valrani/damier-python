@@ -1,4 +1,5 @@
 from tkinter import *
+from math import ceil
 
 
 def drawPawn(posX, posY, color):
@@ -64,11 +65,14 @@ def initBoard():
     whitePawns.append(drawPawn(4, 9, "white"))
     whitePawns.append(drawPawn(6, 9, "white"))
     whitePawns.append(drawPawn(8, 9, "white"))
-    # add a click detection for each pawn
+    # add a drag-n-drop detection for each pawn
     for pawnId in blackPawns + whitePawns:
-        can.tag_bind(pawnId, '<Button-1>', onPawnClick)
+        can.tag_bind(pawnId, '<B1-Motion>', onPawnMoving)
+        can.tag_bind(pawnId, '<ButtonRelease-1>', onPawnStopMoving)
+    # set the interface labels
     blackLeftCounterLabel["text"] = len(blackPawns)
     whiteLeftCounterLabel["text"] = len(whitePawns)
+
 
 def drawBoard():
     for lineNumber in range(0, 10):
@@ -76,9 +80,17 @@ def drawBoard():
         drawBoardLine(lineNumber, offset)
 
 
-def onPawnClick(event):
+def onPawnMoving(event):
     pawnId = event.widget.find_withtag('current')[0]
-    print('Pawn', pawnId, 'clicked')
+    can.coords(pawnId, event.x - 20, event.y - 20, event.x + 20, event.y + 20)
+
+
+def onPawnStopMoving(event):
+    pawnId = event.widget.find_withtag('current')[0]
+    nearestX = ceil(event.x / 50) * 50
+    nearestY = ceil(event.y / 50) * 50
+    can.coords(pawnId, nearestX - 45, nearestY - 45, nearestX - 5, nearestY - 5)
+
 
 # our variables
 blackPawns = []
@@ -103,7 +115,6 @@ whiteLeftCounterLabel.pack()
 
 drawBoard()
 fen.mainloop()
-
 
 """
 useful links:
