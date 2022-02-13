@@ -25,7 +25,6 @@ def initPawns():
     We also bind some callbacks to each pawn to enable the drag-n-drop mechanism.
     :return: nothing
     """
-    global initPawnsButton, blackLeftCounterLabel, whiteLeftCounterLabel
     # place all black
     blackPawns.append(drawPawn(1, 0, "black"))
     blackPawns.append(drawPawn(3, 0, "black"))
@@ -177,29 +176,44 @@ def isValidMove(movingPawnId, destX, destY, destX1, destY1):
             # we moved 2 cases in the top-left
             jumpedPawnId = findPawnByCoordinates(sourceX - 50, sourceY - 50, sourceX1 - 50, sourceY1 - 50)
             if jumpedPawnId != -1 and getColor(jumpedPawnId) != getColor(movingPawnId):
-                # TODO delete the jumpedPawn form the canvas + remove from the list + update the counter labels
+                killPawn(jumpedPawnId)
                 return True
         elif destX == sourceX + 100 and destY == sourceY - 100 and destX1 == sourceX1 + 100 and destY1 == sourceY1 - 100:
             # we moved 2 cases in the top-right
             jumpedPawnId = findPawnByCoordinates(sourceX + 50, sourceY - 50, sourceX1 + 50, sourceY1 - 50)
             if jumpedPawnId != -1 and getColor(jumpedPawnId) != getColor(movingPawnId):
-                # TODO delete the jumpedPawn form the canvas + remove from the list + update the counter labels
+                killPawn(jumpedPawnId)
                 return True
         elif destX == sourceX - 100 and destY == sourceY + 100 and destX1 == sourceX1 - 100 and destY1 == sourceY1 + 100:
             # we moved 2 cases in the bottom-left
             jumpedPawnId = findPawnByCoordinates(sourceX - 50, sourceY + 50, sourceX1 - 50, sourceY1 + 50)
             if jumpedPawnId != -1 and getColor(jumpedPawnId) != getColor(movingPawnId):
-                # TODO delete the jumpedPawn form the canvas + remove from the list + update the counter labels
+                killPawn(jumpedPawnId)
                 return True
         elif destX == sourceX + 100 and destY == sourceY + 100 and destX1 == sourceX1 + 100 and destY1 == sourceY1 + 100:
             # we moved 2 cases in the bottom-right
             jumpedPawnId = findPawnByCoordinates(sourceX + 50, sourceY + 50, sourceX1 + 50, sourceY1 + 50)
             if jumpedPawnId != -1 and getColor(jumpedPawnId) != getColor(movingPawnId):
-                # TODO delete the jumpedPawn form the canvas + remove from the list + update the counter labels
+                killPawn(jumpedPawnId)
                 return True
         return False
     # the move is valid
     return True
+
+
+def killPawn(pawnId):
+    """
+    Kill a pawn, i.e. delete it from the canvas and from the list (whitePawns or blackPawns).
+    Update the GUI counter labels.
+    :return: nothing
+    """
+    if getColor(pawnId) == "black":
+        blackPawns.remove(pawnId)
+        blackLeftCounterLabel["text"] = len(blackPawns)
+    else:
+        whitePawns.remove(pawnId)
+        whiteLeftCounterLabel["text"] = len(whitePawns)
+    can.delete(pawnId)
 
 
 def getColor(pawnId):
@@ -227,23 +241,26 @@ blackPawns = []
 whitePawns = []
 movingPawnOriginalCoordinates = None
 movingPawnColor = None
+currentPlayer = None
 
 # GUI
 fen = Tk()
 fen.title("Le jeu de dames")
 fen.resizable(False, False)
 can = Canvas(fen, width=500, height=500, bg="#efcba0")
-can.pack()
+
 initPawnsButton = Button(fen, text="Nouvelle partie", command=initPawns)
-initPawnsButton.pack(side=BOTTOM, padx=3, pady=3)
 blackLeftLabel = Label(fen, text="Noirs restants :")
-blackLeftLabel.pack()
 blackLeftCounterLabel = Label(fen, text=0)
-blackLeftCounterLabel.pack()
 whiteLeftLabel = Label(fen, text="Blancs restants :")
-whiteLeftLabel.pack()
 whiteLeftCounterLabel = Label(fen, text=0)
-whiteLeftCounterLabel.pack()
+
+can.pack()
+initPawnsButton.pack(side=BOTTOM, padx=3, pady=3)
+blackLeftLabel.pack(side=LEFT)
+blackLeftCounterLabel.pack(side=LEFT)
+whiteLeftCounterLabel.pack(side=RIGHT)
+whiteLeftLabel.pack(side=RIGHT)
 
 initBoard()
 fen.mainloop()
