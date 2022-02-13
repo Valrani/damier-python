@@ -2,6 +2,40 @@ from tkinter import *
 from math import ceil
 
 
+def start():
+    """
+    Start the game.
+    :return: nothing
+    """
+    global currentPlayerColor
+    initPawns()
+    currentPlayerColor = WHITE
+    generalLabel["text"] = WHITE_TURN
+
+
+def endTurn():
+    """
+    End the turn of the current player.
+    If a player has no more pawns, the other win !
+    :return: nothing
+    """
+    global currentPlayerColor
+    # check if there is a winner
+    if len(whitePawns) == 0:
+        currentPlayerColor = None
+        generalLabel["text"] = BLACK_VICTORY
+    elif len(blackPawns) == 0:
+        currentPlayerColor = None
+        generalLabel["text"] = WHITE_VICTORY
+    # change the player turn
+    elif currentPlayerColor == WHITE:
+        currentPlayerColor = BLACK
+        generalLabel["text"] = BLACK_TURN
+    elif currentPlayerColor == BLACK:
+        currentPlayerColor = WHITE
+        generalLabel["text"] = WHITE_TURN
+
+
 def drawPawn(posX, posY, color):
     """
     Create a pawn on the canvas.
@@ -26,47 +60,47 @@ def initPawns():
     :return: nothing
     """
     # place all black
-    blackPawns.append(drawPawn(1, 0, "black"))
-    blackPawns.append(drawPawn(3, 0, "black"))
-    blackPawns.append(drawPawn(5, 0, "black"))
-    blackPawns.append(drawPawn(7, 0, "black"))
-    blackPawns.append(drawPawn(9, 0, "black"))
-    blackPawns.append(drawPawn(0, 1, "black"))
-    blackPawns.append(drawPawn(2, 1, "black"))
-    blackPawns.append(drawPawn(4, 1, "black"))
-    blackPawns.append(drawPawn(6, 1, "black"))
-    blackPawns.append(drawPawn(8, 1, "black"))
-    blackPawns.append(drawPawn(1, 2, "black"))
-    blackPawns.append(drawPawn(3, 2, "black"))
-    blackPawns.append(drawPawn(5, 2, "black"))
-    blackPawns.append(drawPawn(7, 2, "black"))
-    blackPawns.append(drawPawn(9, 2, "black"))
-    blackPawns.append(drawPawn(0, 3, "black"))
-    blackPawns.append(drawPawn(2, 3, "black"))
-    blackPawns.append(drawPawn(4, 3, "black"))
-    blackPawns.append(drawPawn(6, 3, "black"))
-    blackPawns.append(drawPawn(8, 3, "black"))
+    blackPawns.append(drawPawn(1, 0, BLACK))
+    blackPawns.append(drawPawn(3, 0, BLACK))
+    blackPawns.append(drawPawn(5, 0, BLACK))
+    blackPawns.append(drawPawn(7, 0, BLACK))
+    blackPawns.append(drawPawn(9, 0, BLACK))
+    blackPawns.append(drawPawn(0, 1, BLACK))
+    blackPawns.append(drawPawn(2, 1, BLACK))
+    blackPawns.append(drawPawn(4, 1, BLACK))
+    blackPawns.append(drawPawn(6, 1, BLACK))
+    blackPawns.append(drawPawn(8, 1, BLACK))
+    blackPawns.append(drawPawn(1, 2, BLACK))
+    blackPawns.append(drawPawn(3, 2, BLACK))
+    blackPawns.append(drawPawn(5, 2, BLACK))
+    blackPawns.append(drawPawn(7, 2, BLACK))
+    blackPawns.append(drawPawn(9, 2, BLACK))
+    blackPawns.append(drawPawn(0, 3, BLACK))
+    blackPawns.append(drawPawn(2, 3, BLACK))
+    blackPawns.append(drawPawn(4, 3, BLACK))
+    blackPawns.append(drawPawn(6, 3, BLACK))
+    blackPawns.append(drawPawn(8, 3, BLACK))
     # place all whites
-    whitePawns.append(drawPawn(1, 6, "white"))
-    whitePawns.append(drawPawn(3, 6, "white"))
-    whitePawns.append(drawPawn(5, 6, "white"))
-    whitePawns.append(drawPawn(7, 6, "white"))
-    whitePawns.append(drawPawn(9, 6, "white"))
-    whitePawns.append(drawPawn(0, 7, "white"))
-    whitePawns.append(drawPawn(2, 7, "white"))
-    whitePawns.append(drawPawn(4, 7, "white"))
-    whitePawns.append(drawPawn(6, 7, "white"))
-    whitePawns.append(drawPawn(8, 7, "white"))
-    whitePawns.append(drawPawn(1, 8, "white"))
-    whitePawns.append(drawPawn(3, 8, "white"))
-    whitePawns.append(drawPawn(5, 8, "white"))
-    whitePawns.append(drawPawn(7, 8, "white"))
-    whitePawns.append(drawPawn(9, 8, "white"))
-    whitePawns.append(drawPawn(0, 9, "white"))
-    whitePawns.append(drawPawn(2, 9, "white"))
-    whitePawns.append(drawPawn(4, 9, "white"))
-    whitePawns.append(drawPawn(6, 9, "white"))
-    whitePawns.append(drawPawn(8, 9, "white"))
+    whitePawns.append(drawPawn(1, 6, WHITE))
+    whitePawns.append(drawPawn(3, 6, WHITE))
+    whitePawns.append(drawPawn(5, 6, WHITE))
+    whitePawns.append(drawPawn(7, 6, WHITE))
+    whitePawns.append(drawPawn(9, 6, WHITE))
+    whitePawns.append(drawPawn(0, 7, WHITE))
+    whitePawns.append(drawPawn(2, 7, WHITE))
+    whitePawns.append(drawPawn(4, 7, WHITE))
+    whitePawns.append(drawPawn(6, 7, WHITE))
+    whitePawns.append(drawPawn(8, 7, WHITE))
+    whitePawns.append(drawPawn(1, 8, WHITE))
+    whitePawns.append(drawPawn(3, 8, WHITE))
+    whitePawns.append(drawPawn(5, 8, WHITE))
+    whitePawns.append(drawPawn(7, 8, WHITE))
+    whitePawns.append(drawPawn(9, 8, WHITE))
+    whitePawns.append(drawPawn(0, 9, WHITE))
+    whitePawns.append(drawPawn(2, 9, WHITE))
+    whitePawns.append(drawPawn(4, 9, WHITE))
+    whitePawns.append(drawPawn(6, 9, WHITE))
+    whitePawns.append(drawPawn(8, 9, WHITE))
     # add a drag-n-drop detection for each pawn
     for pawnId in blackPawns + whitePawns:
         can.tag_bind(pawnId, '<Button-1>', onPawnClick)
@@ -113,10 +147,13 @@ def onPawnMoving(event):
     """
     Callback executed during the pawn movement.
     Used to recompute its position as the mouse is moving.
+    If we try to move an enemy pawn, the method return and nothing happens.
     :param event: used to know the X and Y coordinates of the mouse
     :return: nothing
     """
     pawnId = event.widget.find_withtag('current')[0]
+    if getColor(pawnId) != currentPlayerColor:
+        return
     can.coords(pawnId, event.x - 20, event.y - 20, event.x + 20, event.y + 20)
 
 
@@ -126,10 +163,13 @@ def onPawnStopMoving(event):
     Used to correctly place the pawn to the nearest case.
     Check if the case is valid (see the rules of the game).
     If not, replace the pawn to its original position.
+    If we try to move an enemy pawn, the method return and nothing happens.
     :param event: used to know the X and Y coordinates of the mouse
     :return: nothing
     """
     pawnId = event.widget.find_withtag('current')[0]
+    if getColor(pawnId) != currentPlayerColor:
+        return
     nearestX = ceil(event.x / 50) * 50
     nearestY = ceil(event.y / 50) * 50
     # destination coordinates
@@ -139,6 +179,8 @@ def onPawnStopMoving(event):
     y1 = nearestY - 5
     if isValidMove(pawnId, x, y, x1, y1):
         can.coords(pawnId, x, y, x1, y1)
+        # the player moved a pawn successfully, so his turn is finish
+        endTurn()
     else:
         can.coords(pawnId, movingPawnOriginalCoordinates)
 
@@ -207,7 +249,7 @@ def killPawn(pawnId):
     Update the GUI counter labels.
     :return: nothing
     """
-    if getColor(pawnId) == "black":
+    if getColor(pawnId) == BLACK:
         blackPawns.remove(pawnId)
         blackLeftCounterLabel["text"] = len(blackPawns)
     else:
@@ -236,12 +278,20 @@ def findPawnByCoordinates(x, y, x1, y1):
     return -1
 
 
+# constants
+BLACK = "black"
+WHITE = "white"
+BLACK_TURN = "AU TOUR DES NOIRS"
+WHITE_TURN = "AU TOUR DES BLANCS"
+BLACK_VICTORY = "LES NOIRS ONT GAGNES !"
+WHITE_VICTORY = "LES BLANCS ONT GAGNES !"
+
 # variables
 blackPawns = []
 whitePawns = []
 movingPawnOriginalCoordinates = None
 movingPawnColor = None
-currentPlayer = None
+currentPlayerColor = None
 
 # GUI
 fen = Tk()
@@ -249,11 +299,12 @@ fen.title("Le jeu de dames")
 fen.resizable(False, False)
 can = Canvas(fen, width=500, height=500, bg="#efcba0")
 
-initPawnsButton = Button(fen, text="Nouvelle partie", command=initPawns)
-blackLeftLabel = Label(fen, text="Noirs restants :")
-blackLeftCounterLabel = Label(fen, text=0)
-whiteLeftLabel = Label(fen, text="Blancs restants :")
-whiteLeftCounterLabel = Label(fen, text=0)
+initPawnsButton = Button(fen, text="Nouvelle partie", command=start)
+blackLeftLabel = Label(fen, text="Noirs restants:")
+blackLeftCounterLabel = Label(fen, text=0, font="Helvetica 16 bold")
+whiteLeftLabel = Label(fen, text="Blancs restants:")
+whiteLeftCounterLabel = Label(fen, text=0, font="Helvetica 16 bold")
+generalLabel = Label(fen, font="Helvetica 16 bold")
 
 can.pack()
 initPawnsButton.pack(side=BOTTOM, padx=3, pady=3)
@@ -261,6 +312,7 @@ blackLeftLabel.pack(side=LEFT)
 blackLeftCounterLabel.pack(side=LEFT)
 whiteLeftCounterLabel.pack(side=RIGHT)
 whiteLeftLabel.pack(side=RIGHT)
+generalLabel.pack()
 
 initBoard()
 fen.mainloop()
