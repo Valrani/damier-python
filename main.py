@@ -21,7 +21,7 @@ def drawPawn(posX, posY, color):
 def initPawns():
     """
     Init all the pawns for a new game.
-    The ID of the pawns are stored in a list (blackPawns and whitePawns).
+    The ID of the pawns are stored in 2 lists, blackPawns and whitePawns.
     We also bind some callbacks to each pawn to enable the drag-n-drop mechanism.
     :return: nothing
     """
@@ -124,7 +124,7 @@ def onPawnStopMoving(event):
     Callback executed when the mouse is released.
     Used to correctly place the pawn to the nearest case.
     Check if the case is valid (see the rules of the game).
-    If not, replace the pawn to its original case.
+    If not, replace the pawn to its original position.
     :param event: used to know the X and Y coordinates of the mouse
     :return: nothing
     """
@@ -165,6 +165,15 @@ def isValidMove(pawnId, destX, destY, destX1, destY1):
     if (destX != sourceX + 50 and destX != sourceX - 50) or (destY != sourceY + 50 and destY != sourceY - 50) or (
             destX1 != sourceX1 + 50 and destX1 != sourceX1 - 50) or (
             destY1 != sourceY1 + 50 and destY1 != sourceY1 - 50):
+        # is so, we also check if the move is 2 cases in diagonal AND there is an enemy pawn in-between
+        if destX == sourceX - 100 and destY == sourceY - 100 and destX1 == sourceX1 - 100 and destY1 == sourceY1 - 100:
+            print("on a bougé de 2 cases en haut à gauche")
+        if destX == sourceX + 100 and destY == sourceY - 100 and destX1 == sourceX1 + 100 and destY1 == sourceY1 - 100:
+            print("on a bougé de 2 cases en haut à droite")
+        if destX == sourceX - 100 and destY == sourceY + 100 and destX1 == sourceX1 - 100 and destY1 == sourceY1 + 100:
+            print("on a bougé de 2 cases en bas à gauche")
+        if destX == sourceX + 100 and destY == sourceY + 100 and destX1 == sourceX1 + 100 and destY1 == sourceY1 + 100:
+            print("on a bougé de 2 cases en bas à droite")
         return False
     # the move is valid
     return True
@@ -181,7 +190,7 @@ fen.title("Le jeu de dames")
 fen.resizable(False, False)
 can = Canvas(fen, width=500, height=500, bg="#efcba0")
 can.pack()
-initPawnsButton = Button(fen, text="Réinitialiser le jeu", command=initPawns)
+initPawnsButton = Button(fen, text="Nouvelle partie", command=initPawns)
 initPawnsButton.pack(side=BOTTOM, padx=3, pady=3)
 blackLeftLabel = Label(fen, text="Noirs restants :")
 blackLeftLabel.pack()
