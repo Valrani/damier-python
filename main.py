@@ -99,13 +99,15 @@ def onPawnClick(event):
     Callback executed the first time the mouse interact with a pawn.
     Used to store the original position of the pawn, so when the pawn is moved then released,
     if the position is invalid, we can move it back to its original position.
-    We temporarily store the original position inside the movingPawnOriginalCoordinates variable.
+    We temporarily store the original position inside the movingPawnOriginalCoordinates variable,
+    and its color in the movingPawnColor variable.
     :param event: used to retrieve the ID of the pawn we interact with
     :return: nothing
     """
-    global movingPawnOriginalCoordinates
+    global movingPawnOriginalCoordinates, movingPawnColor
     pawnId = event.widget.find_withtag('current')[0]
     movingPawnOriginalCoordinates = can.coords(pawnId)
+    movingPawnColor = getColor(pawnId)
 
 
 def onPawnMoving(event):
@@ -142,7 +144,7 @@ def onPawnStopMoving(event):
         can.coords(pawnId, movingPawnOriginalCoordinates)
 
 
-def isValidMove(pawnId, destX, destY, destX1, destY1):
+def isValidMove(movingPawnId, destX, destY, destX1, destY1):
     """
     Check if the pawn can be moved to the given coordinates.
     Rules :
@@ -154,35 +156,77 @@ def isValidMove(pawnId, destX, destY, destX1, destY1):
     sourceY = movingPawnOriginalCoordinates[1]
     sourceX1 = movingPawnOriginalCoordinates[2]
     sourceY1 = movingPawnOriginalCoordinates[3]
-    # TODO remove after debug
-    print("The pawn n°", pawnId, "wants to move from", sourceX, sourceY, sourceX1, sourceY1, "to", destX, destY, destX1,
+
+    print("The pawn n°", movingPawnId, "wants to move from", sourceX, sourceY, sourceX1, sourceY1, "to", destX, destY, destX1,
           destY1)
+
     # check if the pawn is outside de bounds of the canvas
     if (destX < 0 or destX > 500) or (destY < 0 or destY > 500) or (destX1 < 0 or destX1 > 500) or (
             destY1 < 0 or destY1 > 500):
+        return False
+    # check if the destination case is occupied by another pawn
+    if findPawnByCoordinates(destX, destY, destX1, destY1) != -1:
         return False
     # check if the move is not 1 case in diagonal
     if (destX != sourceX + 50 and destX != sourceX - 50) or (destY != sourceY + 50 and destY != sourceY - 50) or (
             destX1 != sourceX1 + 50 and destX1 != sourceX1 - 50) or (
             destY1 != sourceY1 + 50 and destY1 != sourceY1 - 50):
-        # is so, we also check if the move is 2 cases in diagonal AND there is an enemy pawn in-between
+        # is so, we also check if the move is 2 cases in diagonal
+        # AND if there is an obstacle (enemy pawn) between the destination and the source
         if destX == sourceX - 100 and destY == sourceY - 100 and destX1 == sourceX1 - 100 and destY1 == sourceY1 - 100:
-            print("on a bougé de 2 cases en haut à gauche")
-        if destX == sourceX + 100 and destY == sourceY - 100 and destX1 == sourceX1 + 100 and destY1 == sourceY1 - 100:
-            print("on a bougé de 2 cases en haut à droite")
-        if destX == sourceX - 100 and destY == sourceY + 100 and destX1 == sourceX1 - 100 and destY1 == sourceY1 + 100:
-            print("on a bougé de 2 cases en bas à gauche")
-        if destX == sourceX + 100 and destY == sourceY + 100 and destX1 == sourceX1 + 100 and destY1 == sourceY1 + 100:
-            print("on a bougé de 2 cases en bas à droite")
+            # we moved 2 cases in the top-left
+            jumpedPawnId = findPawnByCoordinates(sourceX - 50, sourceY - 50, sourceX1 - 50, sourceY1 - 50)
+            if jumpedPawnId != -1 and getColor(jumpedPawnId) != getColor(movingPawnId):
+                # TODO delete the jumpedPawn form the canvas + remove from the list + update the counter labels
+                return True
+        elif destX == sourceX + 100 and destY == sourceY - 100 and destX1 == sourceX1 + 100 and destY1 == sourceY1 - 100:
+            # we moved 2 cases in the top-right
+            jumpedPawnId = findPawnByCoordinates(sourceX + 50, sourceY - 50, sourceX1 + 50, sourceY1 - 50)
+            if jumpedPawnId != -1 and getColor(jumpedPawnId) != getColor(movingPawnId):
+                # TODO delete the jumpedPawn form the canvas + remove from the list + update the counter labels
+                return True
+        elif destX == sourceX - 100 and destY == sourceY + 100 and destX1 == sourceX1 - 100 and destY1 == sourceY1 + 100:
+            # we moved 2 cases in the bottom-left
+            jumpedPawnId = findPawnByCoordinates(sourceX - 50, sourceY + 50, sourceX1 - 50, sourceY1 + 50)
+            if jumpedPawnId != -1 and getColor(jumpedPawnId) != getColor(movingPawnId):
+                # TODO delete the jumpedPawn form the canvas + remove from the list + update the counter labels
+                return True
+        elif destX == sourceX + 100 and destY == sourceY + 100 and destX1 == sourceX1 + 100 and destY1 == sourceY1 + 100:
+            # we moved 2 cases in the bottom-right
+            jumpedPawnId = findPawnByCoordinates(sourceX + 50, sourceY + 50, sourceX1 + 50, sourceY1 + 50)
+            if jumpedPawnId != -1 and getColor(jumpedPawnId) != getColor(movingPawnId):
+                # TODO delete the jumpedPawn form the canvas + remove from the list + update the counter labels
+                return True
         return False
     # the move is valid
     return True
+
+
+def getColor(pawnId):
+    """
+    Return the color of a pawn by its ID on the canvas.
+    :return: black of white
+    """
+    return can.itemcget(pawnId, "fill")
+
+
+def findPawnByCoordinates(x, y, x1, y1):
+    """
+    Check if there is a pawn on the canvas at the given coordinates.
+    :return: the pawn ID, or -1 if no pawn was found
+    """
+    for pawnId in blackPawns + whitePawns:
+        pawnCoords = can.coords(pawnId)
+        if pawnCoords[0] == x and pawnCoords[1] == y and pawnCoords[2] == x1 and pawnCoords[3] == y1:
+            return pawnId
+    return -1
 
 
 # variables
 blackPawns = []
 whitePawns = []
 movingPawnOriginalCoordinates = None
+movingPawnColor = None
 
 # GUI
 fen = Tk()
