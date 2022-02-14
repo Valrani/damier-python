@@ -201,7 +201,7 @@ def isValidMove(movingPawnId, destX, destY, destX1, destY1):
     print("The pawn n°", movingPawnId, "wants to move from", sourceX, sourceY, sourceX1, sourceY1, "to", destX, destY, destX1,
           destY1)
 
-    # check if the pawn is outside de bounds of the canvas
+    # check if the destination case is outside the canvas
     if (destX < 0 or destX > 500) or (destY < 0 or destY > 500) or (destX1 < 0 or destX1 > 500) or (
             destY1 < 0 or destY1 > 500):
         return False
@@ -212,7 +212,7 @@ def isValidMove(movingPawnId, destX, destY, destX1, destY1):
     if (destX != sourceX + 50 and destX != sourceX - 50) or (destY != sourceY + 50 and destY != sourceY - 50) or (
             destX1 != sourceX1 + 50 and destX1 != sourceX1 - 50) or (
             destY1 != sourceY1 + 50 and destY1 != sourceY1 - 50):
-        # is so, we also check if the move is 2 cases in diagonal
+        # if so, we also check if the move is 2 cases in diagonal
         # AND if there is an obstacle (enemy pawn) between the destination and the source
         if destX == sourceX - 100 and destY == sourceY - 100 and destX1 == sourceX1 - 100 and destY1 == sourceY1 - 100:
             # we moved 2 cases in the top-left
